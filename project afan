@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+         tools {
+        maven 'Maven' 
+    }
+
+    stages {
+        stage('unittest') {
+            steps {
+                sh 'mvn test'
+                echo 'Hello World'
+            }
+        }
+        stage('buid') {
+            steps {
+                sh 'mvn install'
+                echo 'Hello World'
+            }
+        }
+        stage('deploy on test') {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'test', path: '', url: 'http://13.233.153.145:8082')], contextPath: '/demo', war: '**/*.war'
+                echo 'Hello World'
+            }
+        }
+        stage('deploy on prod') {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'prod', path: '', url: 'http://65.0.11.219:8081')], contextPath: '/prod', war: '**/*.war'
+                echo 'Hello World'
+            }
+        }    
+    }
+    post{
+        always{
+            echo "this will always run"
+        }
+        failure{
+            echo "this wil fail"
+        }
+        success{
+            echo "this will run on success"
+            
+        }
+    }
+}
