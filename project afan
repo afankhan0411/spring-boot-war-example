@@ -24,6 +24,10 @@ pipeline {
             }
         }
         stage('deploy on prod') {
+            input {
+                message "Should we continue?"
+                ok "Yes we Should"
+            }
             steps {
                 deploy adapters: [tomcat9(credentialsId: 'prod', path: '', url: 'http://65.0.11.219:8081')], contextPath: '/prod', war: '**/*.war'
                 echo 'Hello World'
